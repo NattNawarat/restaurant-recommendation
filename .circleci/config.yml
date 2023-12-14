@@ -25,7 +25,7 @@ jobs:
           name: run linting
           when: always
           command: |
-            PYTHONPATH=. ./lint.sh
+            chmod +x lint.sh && PYTHONPATH=. ./lint.sh
 
       - store_artifacts:
           path: test-reports
