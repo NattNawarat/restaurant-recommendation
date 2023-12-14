@@ -25,7 +25,7 @@ jobs:
           name: run linting
           when: always
           command: |
-            cd lab8 && PYTHONPATH=. ./tasks/lint.sh
+            PYTHONPATH=. ./lint.sh
 
       - store_artifacts:
           path: test-reports
