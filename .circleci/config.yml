@@ -1,26 +1,36 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/configuration-reference
 version: 2.1
-
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Docker Hub or use one of our convenience images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/configuration-reference/#executor-job
+  build:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/configuration-reference/#steps
+      - image: cimg/python:3.10.1
     steps:
       - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
 
-# Orchestrate jobs using workflows
-# See: https://circleci.com/docs/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+      - restore_cache:
+          keys:
+          - cache-{{ checksum "requirements.txt" }}
+
+      - run:
+          name: install dependencies
+          command: |
+            #sed -i 's/tensorflow==/tensorflow-cpu==/' requirements.txt
+            pip install -r requirements.txt
+            pip install -r requirements-dev.txt
+
+      - save_cache:
+          key: cache-{{ checksum "requirements.txt" }}
+          paths:
+            - ~/.local
+
+      - run:
+          name: run linting
+          when: always
+          command: |
+            chmod +x lint.sh && PYTHONPATH=. ./lint.sh
+
+      - store_artifacts:
+          path: test-reports
+          destination: test-report
+
+
+          

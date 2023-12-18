@@ -1,0 +1,7 @@
+-c requirements.txt
+pycodestyle
+pydocstyle
+pylint
+pytest
+pyyaml
+safety
